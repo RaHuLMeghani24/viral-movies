@@ -31,9 +31,6 @@ export const updateMovieValidation = Joi.object({
 // validation schema for login
 export const loginValidation = Joi.object({
   email: Joi.string().email().required(),
-  password: Joi.string().pattern(
-    new RegExp("^(?=.*[!@#$&*])(?=.*[A-Z]).{6,}$")
-  ),
 });
 
 // validation schema for changePassword
