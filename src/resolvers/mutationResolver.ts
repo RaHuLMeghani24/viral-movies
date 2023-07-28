@@ -18,10 +18,18 @@ import {
   loginValidation,
 } from "../utils/dataValidation";
 import { UserInputError } from "apollo-server";
+import { AnyARecord } from "dns";
 
 const prisma = new PrismaClient();
 
-export const signup = async (
+const dummyData: any = {
+  user_id: 1,
+  movie_name: "test",
+  description: "test",
+  director_name: "test",
+  release_date: new Date("2020-02-02"),
+};
+export const signUp = async (
   _: any,
   { user_name, email, password }: SignUpArgs
 ): Promise<User> => {
@@ -43,4 +51,43 @@ export const signup = async (
   });
 
   return user;
+};
+
+export const login = async (
+  _: any,
+  { email, password }: LoginArgs
+): Promise<String> => {
+  return "dummy";
+};
+
+export const changePassword = async (
+  _: any,
+  { old_password, new_password }: ChangePasswordArgs,
+  context: any
+): Promise<boolean> => {
+  return true;
+};
+
+export const createMovie = async (
+  _: any,
+  args: CreateMovieArgs,
+  context: any
+): Promise<any> => {
+  return dummyData;
+};
+
+export const updateMovie = async (
+  _: any,
+  args: UpdateMovieArgs,
+  context: any
+): Promise<any> => {
+  return dummyData;
+};
+
+export const deleteMovie = async (
+  _: any,
+  { id }: DeleteMovieArgs,
+  context: any
+): Promise<boolean> => {
+  return false;
 };
