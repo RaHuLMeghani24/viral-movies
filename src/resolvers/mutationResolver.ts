@@ -1,8 +1,8 @@
+// Import all necessary modules and types
 import { User, Movie, PrismaClient } from "@prisma/client";
 import { compare, hash } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import { AuthenticationError, UserInputError } from "apollo-server";
-//import { format, parse } from "date-fns";
 import { verify } from "jsonwebtoken";
 import {
   CreateMovieArgs,
@@ -14,9 +14,13 @@ import {
 } from "../interface/argsInterface";
 import { Context, AuthToken } from "../interface/contextInterface";
 
+// Initialize Prisma Client
 const prisma = new PrismaClient();
-const JWT_SECRET = "your-secret-key"; // Replace with a strong random string
 
+// Set JWT Secret Key
+const JWT_SECRET = "your-secret-key"; //ideally it should be in .env file but keeping it here for simplicity
+
+// Import validation functions
 import {
   signUpValidation,
   changePasswordValidation,
@@ -26,6 +30,7 @@ import {
   loginValidation,
 } from "../utils/dataValidation";
 
+// Function to get user ID from JWT
 const getUserId = (context: Context) => {
   const Authorization = context.request.get("Authorization");
   if (Authorization) {
@@ -40,6 +45,7 @@ const getUserId = (context: Context) => {
   throw new AuthenticationError("Not authenticated");
 };
 
+// SignUp mutation resolver
 export const signUp = async (
   _: any,
   { user_name, email, password }: SignUpArgs
@@ -64,6 +70,7 @@ export const signUp = async (
   return user;
 };
 
+// Login mutation resolver
 export const login = async (
   _: any,
   { email, password }: LoginArgs
@@ -95,13 +102,12 @@ export const login = async (
   return token;
 };
 
+// ChangePassword mutation resolver
 export const changePassword = async (
   _: any,
   { old_password, new_password }: ChangePasswordArgs,
   context: any
 ): Promise<boolean> => {
-  // Get userId from JWT token in headers
-
   const { error } = changePasswordValidation.validate({
     new_password,
   });
@@ -114,7 +120,7 @@ export const changePassword = async (
   if (old_password === new_password) {
     throw new UserInputError("Old Password and new password cannot be same.");
   }
-  const userId = getUserId(context); // Replace this with the actual userId obtained from the token
+  const userId = getUserId(context);
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
 
@@ -142,6 +148,7 @@ export const changePassword = async (
   return true;
 };
 
+// CreateMovie mutation resolver
 export const createMovie = async (
   _: any,
   args: CreateMovieArgs,
@@ -165,6 +172,7 @@ export const createMovie = async (
   return movie;
 };
 
+// UpdateMovie mutation resolver
 export const updateMovie = async (
   _: any,
   args: UpdateMovieArgs,
@@ -202,6 +210,7 @@ export const updateMovie = async (
   return updatedMovie;
 };
 
+// DeleteMovie mutation resolver
 export const deleteMovie = async (
   _: any,
   { id }: DeleteMovieArgs,
@@ -214,8 +223,7 @@ export const deleteMovie = async (
       validationErrors: error.details,
     });
   }
-  // Check if user is authenticated, you can implement this part based on the token sent in headers
-  const userId = getUserId(context); // Replace this with the  actual userId obtained from the token
+  const userId = getUserId(context);
 
   const movie = await prisma.movie.findUnique({ where: { id } });
 
@@ -225,7 +233,6 @@ export const deleteMovie = async (
     });
   }
 
-  // Check if the movie is owned by the authenticated user
   if (movie.user_id !== userId) {
     throw new AuthenticationError("Not authorized to delete this movie", {
       errorCode: "UNAUTHORIZED",

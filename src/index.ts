@@ -13,8 +13,13 @@ import {
   deleteMovie,
 } from "./resolvers/mutationResolver";
 
+// Instantiate Apollo server with type definitions, resolvers, custom scalar and context
 const server = new ApolloServer({
+  // The GraphQL schema
   typeDefs,
+
+  // The resolvers that provide the instructions for turning a GraphQL operation
+  // (a query, mutation, or subscription) into data
   resolvers: {
     Query: {
       movies,
@@ -28,13 +33,17 @@ const server = new ApolloServer({
       updateMovie,
       deleteMovie,
     },
+    // Custom date scalar
     Date: customDateScalar,
   },
+
+  // Context is an object shared by all resolvers in a GraphQL operation.
+  // We use it to pass the request object in the context for resolvers to access
   context: ({ req }: { req: express.Request }) => {
-    //
-    // pass the request object in the context
     return { request: req };
   },
+
+  // Error formatter to handle custom errors
   formatError: (error) => {
     if (error.originalError instanceof NotFoundError) {
       return new CustomApolloError(error.message);
@@ -43,6 +52,7 @@ const server = new ApolloServer({
   },
 });
 
+// Server starts listening on a default port or port that is set in environment variables
 server.listen().then(({ url }) => {
   console.log(`Server running at ${url}`);
 });
