@@ -11,6 +11,11 @@ This is a GraphQL server for managing movies built with Node.js, Apollo Server, 
 - **Authentication during Testing:** 
   While testing the API endpoints, don't forget to include the authentication header with each request. The format should be `Bearer {jwt_token}`, where `{jwt_token}` should be replaced with your actual JWT token. Including this header allows the server to verify and authenticate your requests, ensuring secure access to the API operations.
 
+- **ID Field as a Number:** 
+  Throughout this application, I have used the `ID` field as a `number` (int). This was primarily driven by the requirements outlined in the coding prompt. Although I was considering using the `uuid` npm package to handle IDs, I chose to stick with simple numbers to keep things straightforward for this coding test. It's important to note that for more robust applications, a unique identifier like `uuid` could be a better option for the `ID` field.
+
+
+
 
 ## Features
 
